@@ -28,10 +28,12 @@ function useGameOfLifeDriver(): GameOfLifeDriver {
      * @todo Add domain name once it is created.
      */
     const [game, setGame] = useState<GameOfLife | null>(null);
-    const socketRef = useRef<
-        Socket<ServerToClientEvents, ClientToServerEvents>
-    >(io("localhost:3000", {}));
+    const socketRef = useRef<Socket<
+        ServerToClientEvents,
+        ClientToServerEvents
+    > | null>(null);
     useEffect(() => {
+        socketRef.current = io("localhost:3000", {});
         const socket = socketRef.current;
         socket.io.on("error", (error) => {
             console.error(error);
@@ -49,12 +51,17 @@ function useGameOfLifeDriver(): GameOfLifeDriver {
             );
         });
         socketRef.current.emit("requestRefresh");
+        return () => socket.close();
     }, []);
     function tryToToggle(x: number, y: number, alive: boolean) {
-        socketRef.current.emit("requestToggle", x, y, alive);
+        if (socketRef.current) {
+            socketRef.current.emit("requestToggle", x, y, alive);
+        }
     }
     function requestRefresh() {
-        socketRef.current.emit("requestRefresh");
+        if (socketRef.current) {
+            socketRef.current.emit("requestRefresh");
+        }
     }
     return {
         game: game,
