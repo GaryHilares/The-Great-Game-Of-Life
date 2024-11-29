@@ -1,13 +1,20 @@
 import { GameOfLifeView } from "./GameOfLifeView";
-import { GameOfLife } from "./GameOfLife";
+import { useGameOfLifeDriver } from "./useGameOfLifeDriver";
 
 /**
  * Impure component that renders the app.
  * @returns A JSX component that represents the app.
  */
 function App() {
-    const game = new GameOfLife(2, 1, [true, false], 1);
-    return <GameOfLifeView game={game} />;
+    const gameDriver = useGameOfLifeDriver();
+    return (
+        gameDriver.game && (
+            <GameOfLifeView
+                game={gameDriver.game}
+                onClick={gameDriver.tryToToggle}
+            />
+        )
+    );
 }
 
 export default App;

@@ -27,10 +27,10 @@ class GameOfLife {
      * @param x x-coordinate of tile that was toggled.
      * @param y y-coordinate of tile that was toggled.
      */
-    applyToggle(x: number, y: number): GameOfLife {
+    applyToggle(x: number, y: number, alive: boolean): GameOfLife {
         const newBoard = Array.from<boolean>(this.board);
         const tileBoardCoordinate = this.toBoardCoordinate(x, y);
-        newBoard[tileBoardCoordinate] = !newBoard[tileBoardCoordinate];
+        newBoard[tileBoardCoordinate] = alive;
         return new GameOfLife(this.n, this.m, newBoard, this.nextUpdateTime);
     }
 
@@ -60,7 +60,7 @@ class GameOfLife {
     }
 
     /**
-     * Givene a (x, y) pair, produces the tile value at these coordinates.
+     * Given a (x, y) pair, produces the tile value at these coordinates.
      * @param x The x-coordinate to get.
      * @param y The y-coordinate to get.
      * @returns The value of the board at (x, y).

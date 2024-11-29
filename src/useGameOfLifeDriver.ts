@@ -3,7 +3,7 @@ import { io, Socket } from "socket.io-client";
 import { useState, useEffect, useRef } from "react";
 
 interface ServerToClientEvents {
-    toggleOnClient: (x: number, y: number) => void;
+    toggleOnClient: (x: number, y: number, alive: boolean) => void;
     refreshClient: (
         n: number,
         m: number,
@@ -13,13 +13,13 @@ interface ServerToClientEvents {
 }
 
 interface ClientToServerEvents {
-    requestToggle: (x: number, y: number) => void;
+    requestToggle: (x: number, y: number, alive: boolean) => void;
     requestRefresh: () => void;
 }
 
 interface GameOfLifeDriver {
     game: GameOfLife | null;
-    tryToToggle: (x: number, y: number) => void;
+    tryToToggle: (x: number, y: number, alive: boolean) => void;
     requestRefresh: () => void;
 }
 
@@ -30,16 +30,18 @@ function useGameOfLifeDriver(): GameOfLifeDriver {
     const [game, setGame] = useState<GameOfLife | null>(null);
     const socketRef = useRef<
         Socket<ServerToClientEvents, ClientToServerEvents>
-    >(io("", {}));
+    >(io("localhost:3000", {}));
     useEffect(() => {
         const socket = socketRef.current;
         socket.io.on("error", (error) => {
             console.error(error);
         });
-        socket.on("toggleOnClient", (x, y) => {
-            setGame((game) => (game ? game.applyToggle(x, y) : null));
+        socket.on("toggleOnClient", (x, y, alive) => {
+            console.log(`toggleOnClient(${x}, ${y}) received.`);
+            setGame((game) => (game ? game.applyToggle(x, y, alive) : null));
         });
         socket.on("refreshClient", (n, m, board, nextUpdateTime) => {
+            console.log("refreshClient received.");
             setGame((game) =>
                 game
                     ? game.applyRefresh(n, m, board, nextUpdateTime)
@@ -48,8 +50,8 @@ function useGameOfLifeDriver(): GameOfLifeDriver {
         });
         socketRef.current.emit("requestRefresh");
     }, []);
-    function tryToToggle(x: number, y: number) {
-        socketRef.current.emit("requestToggle", x, y);
+    function tryToToggle(x: number, y: number, alive: boolean) {
+        socketRef.current.emit("requestToggle", x, y, alive);
     }
     function requestRefresh() {
         socketRef.current.emit("requestRefresh");
