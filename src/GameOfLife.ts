@@ -5,21 +5,14 @@ class GameOfLife {
     private n: number;
     private m: number;
     private board: boolean[];
-    private nextUpdateTime: number;
 
     /**
      * Creates a new GameOfLife.
      */
-    constructor(
-        n: number,
-        m: number,
-        board: boolean[],
-        nextUpdateTime: number
-    ) {
+    constructor(n: number, m: number, board: boolean[]) {
         this.n = n;
         this.m = m;
         this.board = board;
-        this.nextUpdateTime = nextUpdateTime;
     }
 
     /**
@@ -31,7 +24,7 @@ class GameOfLife {
         const newBoard = Array.from<boolean>(this.board);
         const tileBoardCoordinate = this.toBoardCoordinate(x, y);
         newBoard[tileBoardCoordinate] = alive;
-        return new GameOfLife(this.n, this.m, newBoard, this.nextUpdateTime);
+        return new GameOfLife(this.n, this.m, newBoard);
     }
 
     /**
@@ -40,13 +33,8 @@ class GameOfLife {
      * @param m Number of rows in the board.
      * @param board Current board state.
      */
-    applyRefresh(
-        n: number,
-        m: number,
-        board: boolean[],
-        nextUpdateTime: number
-    ): GameOfLife {
-        return new GameOfLife(n, m, board, nextUpdateTime);
+    applyRefresh(n: number, m: number, board: boolean[]): GameOfLife {
+        return new GameOfLife(n, m, board);
     }
 
     /**
