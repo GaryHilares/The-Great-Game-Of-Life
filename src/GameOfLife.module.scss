@@ -1,3 +1,10 @@
+div.wrapper {
+    white-space: nowrap;
+    overflow: auto;
+    max-height: 100vh;
+    max-width: 100vw;
+}
+
 button.tile-alive {
     margin: 0;
     padding: 0;
